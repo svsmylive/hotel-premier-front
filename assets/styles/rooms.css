@@ -5,7 +5,7 @@ body {
 .cover-image {
     width: calc(100vw - 40px);
     height: 422px;
-    border-radius: 50px;
+    border-radius: 20px;
     overflow: hidden;
     margin: -16px auto 80px;
     position: relative;
@@ -55,6 +55,8 @@ body {
     overflow: hidden;
 }
 .room__images img {
+    max-width: 527px;
+    max-height: 320px;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -277,6 +279,9 @@ body {
         min-width: 100%;
         height: 320px;
     }
+    .room__images img {
+        max-width: 100%;
+    }
     .room__info-bottom {
         flex-direction: column;
         align-items: flex-start;
@@ -378,6 +383,9 @@ body {
         width: 100%;
         min-width: 100%;
         height: 320px;
+    }
+    .room__images img {
+        max-width: 100%;
     }
     .room__info-bottom {
         flex-direction: column;

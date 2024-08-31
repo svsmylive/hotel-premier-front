@@ -5,11 +5,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title></title>
 
+
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Tenor+Sans&display=swap" rel="stylesheet">
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 	<link href="/assets/styles/styles.css" rel="stylesheet">
 	<link href="/assets/styles/rooms.css" rel="stylesheet">
 </head>
@@ -75,12 +77,22 @@
 				<div class="rooms">
 					<div
 						class="room"
-						v-for="room in rooms"
+						v-for="(room, roomIdx) in rooms"
 						:key="`room-${room.id}`"
 					>
 						<div class="room__images">
 							<template v-if="room.images.length">
-								<img :src="`http://vladim0u.beget.tech${room.images.filter((img) => img.is_main)[0].url}`" />
+								<div class="swiper mySwiper">
+									<div class="swiper-wrapper">
+										<div
+											class="swiper-slide"
+											v-for="image in room.images" :key="image.id"
+										>
+											<img :src="`http://vladim0u.beget.tech${image.url}`" />
+										</div>
+									</div>
+									<div class="swiper-pagination"></div>
+								</div>
 							</template>
 						</div>
 						<div class="room__info">
@@ -190,6 +202,17 @@
 				}
 
 				rooms.value = await response.json()
+				setTimeout(() => {
+					const swiper = new Swiper(".mySwiper", {
+						slidesPerView: 1,
+						spaceBetween: 12,
+						loop: true,
+						pagination: {
+							el: ".swiper-pagination",
+							clickable: true,
+						},
+					})
+				}, 2000)
 			} catch (error) {
 				console.error(error.message)
 			}
@@ -205,5 +228,6 @@
 			}
 		}).mount('#app')
 	</script>
+	<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 </body>
 </html>

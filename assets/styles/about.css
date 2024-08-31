@@ -132,16 +132,15 @@ body {
     display: flex;
     gap: 40px;
     width: 100vw;
-    margin-left: calc(0px - (100vw - 1320px) / 2);
-    padding: 0 30px;
-    justify-content: center;
+    overflow: auto;
+    padding: 0 60px;
 }
 .reviews__item {
     padding: 40px;
     opacity: 1;
     border-radius: 20px;
     background-color: rgba(243, 243, 244, 1);
-    flex: 1;
+    min-width: 594px;
     max-width: 33%;
 }
 .reviews__item--active {
