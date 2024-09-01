@@ -9,9 +9,11 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Tenor+Sans&display=swap" rel="stylesheet">
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<script src="https://unpkg.com/@vuepic/vue-datepicker@latest"></script>
 
 	<link href="/assets/styles/styles.css" rel="stylesheet">
 	<link href="/assets/styles/index.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker@latest/dist/main.css">
 </head>
 <body id="app">
 	<header class="header desktop">
@@ -60,54 +62,74 @@
 			<source src="/public/videos/main_page.mp4" type="video/mp4">
 		</video>
 	</div>
-	<div class="widget tl-widget-form"></div>
+	<div class="widget">
+		<div class="widget__datepickers">
+			<div class="widget__datepicker">
+				<vue-date-picker
+					v-model="startDate"
+					locale="ru"
+					auto-apply
+					:enable-time-picker="false"
+					:clearable="false"
+					placeholder="Дата заезда"
+					no-today
+					:format="format"
+				/>
+			</div>
+			<div class="widget__datepicker">
+				<vue-date-picker
+					v-model="endDate"
+					locale="ru"
+					auto-apply
+					:enable-time-picker="false"
+					:clearable="false"
+					placeholder="Дата выезда"
+					no-today
+					:format="format"
+				/>
+			</div>
+		</div>
+		<div class="widget__button" @click="goToBooking()">Найти номер</div>
+	</div>
 	<script>
 		const { createApp, ref, onMounted } = Vue
 
+		const startDate = ref()
+		const endDate = ref()
 		const mobileMenu = ref(false)
+
 		const toggleMenu = () => {
 			mobileMenu.value = !mobileMenu.value
+		}
+		const format = (date) => {
+			const day = date.getDate()
+			const month = new Date(date).toLocaleString("ru-RU", { month: "long" })
+			const year = date.getFullYear()
+
+			return `${day} ${month} ${year}`
+		}
+		const formatDate = (date) => {
+			const day = date.getDate()
+			const month = date.getMonth() + 1
+			const year = date.getFullYear()
+
+			return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`
+		}
+		const goToBooking = () => {
+			const hotelID = 56
+			const headOfficeID = 42
+			const hotelName= '%D0%9F%D1%80%D0%B5%D0%BC%D1%8C%D0%B5%D1%80%20%D0%BE%D1%82%D0%B5%D0%BB%D1%8C'
+			const start = formatDate(startDate.value)
+			const end = formatDate(endDate.value)
+			window.location.href = `https://hotelkrasnodar-test.ru/booking?startDate=${start}&endDate=${end}&hotelID=${hotelID}&headOfficeID=${headOfficeID}&hotelName=${hotelName}`
 		}
 
 		createApp({
 			setup() {
-				return { mobileMenu, toggleMenu }
-			}
+				return { mobileMenu, toggleMenu, startDate, endDate, format, goToBooking }
+			},
+			components: { VueDatePicker },
 		}).mount('#app')
-
-		;(function (d, w, e) {
-			w[e] = w[e] || function(){
-				try {
-					w.ecviBookingForm = new EcviBookingForm({
-						protocol: 'http',
-						showOtherHotels: true,
-						checkHotelByDefault: true,
-						headOfficeID: '42',
-						hotelID: '56',
-						bookingPath: 'http://vladim0u.beget.tech/booking',
-						token: '98c95917-31ea-4306-b95d-7d450d84bdb5',
-						width: '',
-						height: 116,
-						cssPath: 'http://vladim0u.beget.tech/assets/styles/custom.css',
-						rulesPath: 'http://vladim0u.beget.tech/rules.html',
-						policyPath: 'http://vladim0u.beget.tech/confidential.html',
-						container: 'tl-widget-form',
-						target: 'widget',
-						lang: sessionStorage.getItem('ecviLang') || document.documentElement.lang.toUpperCase() || 'RU',
-						hiddenElems: 'nutrition,time'
-					});
-				} catch(e) { console.warn( 'Something goes wrong'); }
-			}
-			var n = d.getElementsByTagName('script')[0],
-				s = d.createElement('script'),
-				f = function () { n.parentNode.insertBefore(s, n); };
-			s.type = 'text/javascript';
-			s.async = true;
-			s.src = 'http://cm.web-booking.ru/assets/formreservation/js/iframeCreate/widget.create.js';
-			if (w.opera == '[object Opera]') {
-				d.addEventListener('DOMContentLoaded', f, false);
-			} else { f(); }
-		})(document, window, 'ecvi_booking_callback');
 	</script>
 </body>
 </html>
