@@ -134,24 +134,3 @@
 .ui-datepicker .ui-datepicker-buttonpane {
     display: none;
 }
-
-
-.container {
-    max-width: fit-content;
-}
-
-[data-spoiler], [data-spoilersection] {
-    display: flex;
-    flex-direction: column;
-    gap: 56px;
-}
-.available-item {
-    box-shadow: none;
-    padding: 0;
-    margin-bottom: 0;
-    background-color: white;
-}
-.available-item .col3-4 {
-    width: 100%;
-    margin: 0;
-}
