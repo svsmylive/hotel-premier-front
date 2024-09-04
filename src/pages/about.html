@@ -110,8 +110,11 @@
 						<div class="reviews__button" @click="openModal()">Добавить отзыв</div>
 					</div>
 				</div>
-				<div class="reviews__items">
-						<div
+				<div
+					class="reviews__items"
+					:class="{'reviews__items--one': reviews.length === 1}"
+				>
+					<div
 							class="reviews__item"
 							v-for="review in reviews.data" :key="review.id"
 						>
@@ -126,7 +129,7 @@
 							</div>
 							<div class="reviews__item-text">{{ review.text }}</div>
 						</div>
-					</div>
+				</div>
 			</div>
 			<div class="content">
 				<div class="banner">
