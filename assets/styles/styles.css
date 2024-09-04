@@ -133,6 +133,8 @@ h1 {
     background-repeat: no-repeat;
     background-size: 20px;
     padding-left: 36px;
+    text-decoration: none;
+    color: rgb(30, 30, 30);
 }
 .header .contacts_address {
     background-image: url(/assets/icons/icon-location-brown.svg);
