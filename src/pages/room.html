@@ -19,7 +19,6 @@
 	<link href="/assets/styles/styles.css" rel="stylesheet">
 	<link href="/assets/styles/room.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker@latest/dist/main.css">
-	<link rel="stylesheet" href="https://unpkg.com/photoswipe@5.2.2/dist/photoswipe.css">
 	<link href="https://cdn.jsdelivr.net/npm/nanogallery2@3/dist/css/nanogallery2.min.css" rel="stylesheet" type="text/css">
 
 </head>
@@ -80,6 +79,19 @@
 		<div class="content">
 			<h1>Номер категории «Стандарт»</h1>
 			<div class="room">
+				<div class="room__images-mobile">
+					<div class="swiper mySwiper">
+						<div class="swiper-wrapper">
+							<div class="swiper-slide">
+								<img src="/public/images/room-1.jpg" />
+							</div>
+							<div class="swiper-slide">
+								<img src="/public/images/room-2.jpg" />
+							</div>
+						</div>
+						<div class="swiper-pagination"></div>
+					</div>
+				</div>
 				<div class="room__images">
 					<div class="room__image room__image-main">
 						<img src="/public/images/room-1.jpg" data-ngsrc="/public/images/room-1.jpg" data-nanogallery2-lightbox />
@@ -127,10 +139,26 @@
 							<div class="room__form-time1">Заезд 15:00</div>
 							<div class="room__form-time2">Выезд 11:00</div>
 						</div>
-						<div class="room__form-row">
+						<div class="room__form-rows">
+							<div class="room__form-row">
+								<div class="room__form-input">
+									<vue-date-picker
+										v-model="startDate"
+										locale="ru"
+										auto-apply
+										:enable-time-picker="false"
+										:clearable="false"
+										placeholder="Дата заезда"
+										no-today
+										:format="format"
+										:min-date="new Date()"
+									/>
+								</div>
+							</div>
+							<div class="room__form-row">
 							<div class="room__form-input">
 								<vue-date-picker
-									v-model="startDate"
+									v-model="endDate"
 									locale="ru"
 									auto-apply
 									:enable-time-picker="false"
@@ -142,20 +170,6 @@
 								/>
 							</div>
 						</div>
-						<div class="room__form-row">
-							<div class="room__form-input">
-								<vue-date-picker
-									v-model="startDate"
-									locale="ru"
-									auto-apply
-									:enable-time-picker="false"
-									:clearable="false"
-									placeholder="Дата заезда"
-									no-today
-									:format="format"
-									:min-date="new Date()"
-								/>
-							</div>
 						</div>
 						<div class="room__form-cost">
 							<div class="room__form-cost-line">
@@ -171,7 +185,7 @@
 									ИТОГО
 									<small>Налоги и сборы включены</small>
 								</span>
-								<span>16 200 ₽</span>
+								<span>{{ totalPrice }} ₽</span>
 							</div>
 						</div>
 						<div class="room__form-button">Забронировать</div>
@@ -202,7 +216,7 @@
 					<img src="/public/images/benefits-1.jpg" />
 					<div class="benefits__item-title">Room service</div>
 				</div>
-				<div class="benefits__item"></div>
+				<div class="benefits__item benefits__item--empty"></div>
 				<div class="benefits__item">
 					<img src="/public/images/benefits-2.jpg" />
 					<div class="benefits__item-title">Бассейн</div>
@@ -211,7 +225,7 @@
 					<img src="/public/images/benefits-3.jpg" />
 					<div class="benefits__item-title">Тренажерный зал</div>
 				</div>
-				<div class="benefits__item"></div>
+				<div class="benefits__item benefits__item--empty"></div>
 				<div class="benefits__item">
 					<img src="/public/images/benefits-4.jpg" />
 					<div class="benefits__item-title">Ресторанный комплекс</div>
@@ -220,7 +234,7 @@
 					<img src="/public/images/benefits-5.jpg" />
 					<div class="benefits__item-title">Парк «Краснодар»</div>
 				</div>
-				<div class="benefits__item"></div>
+				<div class="benefits__item benefits__item--empty"></div>
 			</div>
 		</div>
 	</main>
@@ -281,9 +295,12 @@
 	</footer>
 </div>
 <script>
-	const { createApp, ref, onMounted } = Vue
+	const { createApp, ref, onMounted, watch, computed } = Vue
 
 	const rooms = ref([])
+	const roomPrice = 18000
+	const roomDiscount = 10
+	const diffDays = ref(1)
 
 	const mobileMenu = ref(false)
 	const startDate = ref()
@@ -326,16 +343,48 @@
 		window.location.href = `https://hotelkrasnodar-test.ru/booking?startDate=${start}&endDate=${end}&hotelID=${hotelID}&headOfficeID=${headOfficeID}&hotelName=${hotelName}`
 	}
 
+	const totalPrice = computed(() => {
+		return ((roomPrice - (roomPrice * (roomDiscount / 100))) * diffDays.value).toLocaleString()
+	})
+
+	const getDiffDays = (start, end) => {
+		const diffTime = Math.abs(end - start)
+		return Math.floor(diffTime / (1000 * 60 * 60 * 24))
+	}
+
+	watch(() => startDate.value, () => {
+		if (startDate.value && endDate.value) {
+			diffDays.value = getDiffDays(startDate.value, endDate.value)
+			console.log('diffDays', diffDays.value)
+		}
+	})
+	watch(() => endDate.value, () => {
+		if (startDate.value && endDate.value) {
+			diffDays.value = getDiffDays(startDate.value, endDate.value)
+			console.log('diffDays', diffDays.value)
+		}
+	})
+
 	createApp({
 		setup() {
 			onMounted(() => {
-				// fetchRooms()
+					setTimeout(() => {
+						const swiper = new Swiper(".mySwiper", {
+							slidesPerView: 1,
+							spaceBetween: 12,
+							loop: true,
+							pagination: {
+								el: ".swiper-pagination",
+								clickable: true,
+							},
+						})
+					}, 1000)
 			})
-
-			return { mobileMenu, toggleMenu, rooms, startDate, endDate, format, formatDate, goToBooking }
+			return { mobileMenu, toggleMenu, rooms, startDate, endDate, format, formatDate, goToBooking, totalPrice }
 		},
 		components: { VueDatePicker },
 	}).mount('#app')
 </script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 </body>
 </html>
